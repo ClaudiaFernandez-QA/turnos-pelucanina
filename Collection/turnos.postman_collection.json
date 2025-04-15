@@ -1,0 +1,322 @@
+{
+	"info": {
+		"_postman_id": "e84b7fd9-b024-4163-bfc3-8b2a2790d6d5",
+		"name": "Turnos Pelu Canina",
+		"description": "# 🐾 Turnos Pelu Canina - API Testing\n\nEste proyecto simula un sistema de turnos para un petshop especializadao en baño, corte de pelo y corte de uñas para mascotas.\n\nEste proyecto fue creado como ejercicio práctico para profundizar en habilidades de API Testing con Postman, Newman y Data Driven Testing con archivos `.json`.\n\n---\n\n## 🎯 Objetivo del Proyecto\n\n- Simular un flujo de alta de turnos.\n    \n- Aplicar validación de datos.\n    \n- Usar Postman como herramienta principal para automatizar pruebas.\n    \n- Ejecutar las pruebas con Newman en la terminal.\n    \n\n---\n\n## 🧩 Estructura del proyecto\n\n📁 Collection/  \n└─ turnos.postman_collection.json  \n📁 Environment/  \n└─ turnos.postman_environment.json  \n📁 Data/  \n└─ turnos_data.json\n\n---\n\n## 🧠 Lógica del Negocio Asumida\n\nDado que usamos [crudcrud.com](https://crudcrud.com/) como backend simulado (sin validaciones reales), aplicamos reglas de negocio directamente desde Postman para simular el comportamiento de una API profesional.\n\n- 🔐 **Todos los campos son obligatorios** y deben cumplir su tipo de dato.\n    \n- 📅 **Horario permitido**: solo turnos entre `09:00` y `17:00`, en horas enteras (ej: `10:00`, `14:00`, no se acepta `14:30`).\n    \n- 🐶 **Tamaño permitido de mascotas**: `\"chico\"`, `\"mediano\"`, `\"grande\"`.\n    \n- 🛁 **Servicios válidos**:\n    \n    - `baño`\n        \n    - `corte de pelo`\n        \n    - `corte de uñas`\n        \n- 📞 **Formato de teléfono** : string numérico de 10 a 12 dígitos.\n    \n- 📆 **Formato de fecha**: `YYYY-MM-DD`.\n    \n- ✅ **`services`** debe ser un array con al menos un servicio y máximo tres.\n    \n\n---\n\n## 🌐 Cómo configurar crudcrud.com\n\n`crudcrud.com` actúa como un servidor backend temporal que **persiste datos por 24hs** y permite hacer pruebas sin necesidad de un backend real.\n\n### 🔧 Pasos para generar tu token:\n\n1. Ingresá a 👉 [https://crudcrud.com](https://crudcrud.com)\n    \n2. Automáticamente se te mostrará una URL como esta: [<i>https://crudcrud.com/api/0123abc456def7890ghi12345678</i>](https://crudcrud.com/api/0123abc456def7890ghi12345678)\n    \n3. Copiá **solo la parte del token**, que sería: _0123abc456def7890ghi12345678_\n    \n4. Ahora, abrí el archivo `turnos.postman_environment.json` con un editor de texto.  \n    Buscá esta parte:  \n    {  \n    \"key\": \"token\",  \n    \"value\": \"aca_va_tu_token\"  \n    }\n    \n5. Pegá ahí tu token entre comillas. Y guardá.\n    \n\n## 🧠 Consideraciones adicionales\n\n- El token de `crudcrud.com` expira en 24hs.\n    \n- Si al correr el flujo ves errores 404 o \"No se encontró ID\", probablemente el token ya haya vencido. Generá uno nuevo.\n    \n\n---\n\n## ⚙️ Requisitos Técnicos\n\nPara ejecutar este proyecto necesitás:\n\n- [Postman](https://www.postman.com/) instalado (opcional, para exploración manual)\n    \n- [Node.js](https://nodejs.org/) instalado (para usar Newman)\n    \n- Instalar Newman:\n    \n\n``` bash\nnpm install -g newman\n\n ```\n\n---\n\n## 🚀 Ejecución con Newman\n\nEste comando corre el flujo completo de creación y validación de turnos:\n\n``` bash\nnewman run \"Collection/turnos.postman_collection.json\" \\\n  -e \"Environment/turnos.postman_environment.json\" \\\n  -d \"Data/turnos_data.json\" \\\n  --reporters cli\n\n ```",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28264711",
+		"_collection_link": "https://trello-apitesting.postman.co/workspace/API-TESTING~4a518145-bf8c-4a2f-8ed4-685cd3d9eec0/collection/28264711-e84b7fd9-b024-4163-bfc3-8b2a2790d6d5?action=share&source=collection_link&creator=28264711"
+	},
+	"item": [
+		{
+			"name": "Agregar turnos",
+			"item": [
+				{
+					"name": "Add Appointments",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"//Tomamos la fila actual del archivo .json y la convertimos en un objeto plano\r",
+									"const input = pm.iterationData.toObject();\r",
+									"\r",
+									"// Armamos el objeto del body usando los datos de la fila actual\r",
+									"const body = {\r",
+									"    client: input.client,\r",
+									"    pet: input.pet,\r",
+									"    services: input.services,\r",
+									"    date: input.date,\r",
+									"    time: input.time\r",
+									"};\r",
+									"\r",
+									"const schema = {\r",
+									"    client: {\r",
+									"        type: \"object\",\r",
+									"        required: true,\r",
+									"        fields: {\r",
+									"            fullName: { type: \"string\", required: true },\r",
+									"            phone: { type: \"string\", required: true }\r",
+									"        }\r",
+									"    },\r",
+									"    pet: {\r",
+									"        type: \"object\",\r",
+									"        required: true,\r",
+									"        fields: {\r",
+									"            name: { type: \"string\", required: true },\r",
+									"            size: { type: \"string\", required: true }\r",
+									"        }\r",
+									"    },\r",
+									"    services: { type: \"array\", required: true, itemsType: \"string\" },\r",
+									"    date: { type: \"string\", required: true },\r",
+									"    time: { type: \"string\", required: true }\r",
+									"};\r",
+									"\r",
+									"function validateData(schema, data) {\r",
+									"    for (let key in schema) {\r",
+									"        const rule = schema[key];\r",
+									"        const value = data[key];\r",
+									"\r",
+									"        //Valido que las key no esten vacías o undefined\r",
+									"        if (value === undefined || value === null || value === \"\") {\r",
+									"            throw new Error(`El campo \"${key}\" no puede estar vacío.`);\r",
+									"        }\r",
+									"        //Valido tipo de dato (solo si no es un object con subcampos)\r",
+									"        if (rule.type !== \"object\" && rule.type !== \"array\" && typeof value !== rule.type) {\r",
+									"            throw new Error(`El campo \"${key}\" debe ser de tipo \"${rule.type}\", pero se recibió: \"${typeof value}\".`);\r",
+									"        }\r",
+									"        //Validaciones para objeto\r",
+									"        if (rule.type === \"object\") {\r",
+									"            for (let field in rule.fields) {\r",
+									"                const expectedType = rule.fields[field].type;\r",
+									"                const actualValue = value[field];\r",
+									"\r",
+									"                //Valido que el tipo sea el correcto  \r",
+									"                if (typeof (actualValue) !== expectedType) {\r",
+									"                    throw new Error(`El campo \"${field}\" debe ser de tipo ${expectedType}`);\r",
+									"\r",
+									"                }\r",
+									"                //Valido que las key no esten vacías o undefined        \r",
+									"                if (actualValue === \"undefined\" || actualValue === null || actualValue === \"\") {\r",
+									"                    throw new Error(`El campo \"${field}\" no puede estar vacío`)\r",
+									"                }\r",
+									"            }\r",
+									"        }\r",
+									"        //Validaciones para array\r",
+									"        if (rule.type === \"array\") {\r",
+									"            if (!Array.isArray(value)) {\r",
+									"                throw new Error(`El campo \"${key}\" debe ser un array.`);\r",
+									"            }\r",
+									"            // Validamos que el array tenga elementos\r",
+									"            if (value.length === 0) {\r",
+									"                throw new Error(`El campo \"${key}\" no puede estar vacío.`);\r",
+									"            }\r",
+									"\r",
+									"            if (rule.itemsType) {\r",
+									"                for (let i = 0; i < value.length; i++) {\r",
+									"                    if (typeof value[i] !== rule.itemsType) {\r",
+									"                        throw new Error(`El campo \"${key}\" debe contener solo elementos de tipo \"${rule.itemsType}\".`);\r",
+									"                    }\r",
+									"                }\r",
+									"            }\r",
+									"\r",
+									"        }\r",
+									"\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"// Ejecutamos la validación\r",
+									"validateData(schema, input);\r",
+									"\r",
+									"// Convertimos el body a string y lo asignamos al request\r",
+									"pm.request.body.raw = JSON.stringify(body);\r",
+									"\r",
+									"console.log(\"✅ Body generado y validado con éxito\");\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();\r",
+									"const input = pm.iterationData.toObject();\r",
+									"\r",
+									"// Validar status\r",
+									"pm.test(\"Validar Status 201 - Turno creado exitosamente\", () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Validar estructura y tipos de datos\r",
+									"pm.test(\"Validar la estructura del turno creado\", () => {\r",
+									"    pm.expect(res).to.have.property(\"_id\");\r",
+									"    pm.expect(res.client.fullName).to.be.a(\"string\");\r",
+									"    pm.expect(res.client.phone).to.be.a(\"string\");\r",
+									"    pm.expect(res.pet.name).to.be.a(\"string\");\r",
+									"    pm.expect(res.pet.size).to.be.oneOf([\"chico\", \"mediano\", \"grande\"]);\r",
+									"    pm.expect(res.services).to.be.an(\"array\").that.is.not.empty;\r",
+									"    pm.expect(res.date).to.match(/^\\d{4}-\\d{2}-\\d{2}$/);\r",
+									"    pm.expect(res.time).to.match(/^([0][9]|1[0-7]):00$/);\r",
+									"});\r",
+									"\r",
+									"// Validar que los valores coinciden con el archivo de entrada\r",
+									"pm.test(\"Validar coincidencia con datos enviados\", () => {\r",
+									"    pm.expect(res.client.fullName).to.eql(input.client.fullName);\r",
+									"    pm.expect(res.client.phone).to.eql(input.client.phone);\r",
+									"    pm.expect(res.pet.name).to.eql(input.pet.name);\r",
+									"    pm.expect(res.pet.size).to.eql(input.pet.size);\r",
+									"    pm.expect(res.date).to.eql(input.date);\r",
+									"    pm.expect(res.time).to.eql(input.time);\r",
+									"    pm.expect(res.services).to.have.members(input.services); \r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"appointment_id\", res._id);\r",
+									"// Guardar el ID para usar en PUT o DELETE\r",
+									"pm.test(\"Valida el guardado del ID del turno creado\", () => {\r",
+									"    pm.collectionVariables.get(\"appointment_id\");\r",
+									"});\r",
+									"\r",
+									"console.log(\"ID guardado:\", res._id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "// El body completo se arma dinámicamente en el pre-request usando pm.iterationData.\r\n//ya que Postman NO puede acceder directamente a propiedades anidadas del archivo .json de datos.\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{token}}/appointments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{token}}",
+								"appointments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get appointment by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Valida status 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valida la estructura de la respuesta\", () => {\r",
+									"    pm.expect(res).to.have.property(\"client\");\r",
+									"    pm.expect(res).to.have.property(\"pet\");\r",
+									"    pm.expect(res).to.have.property(\"services\");\r",
+									"    pm.expect(res).to.have.property(\"date\");\r",
+									"    pm.expect(res).to.have.property(\"time\");\r",
+									"\r",
+									"    pm.expect(res.client).to.have.property(\"fullName\");\r",
+									"    pm.expect(res.client).to.have.property(\"phone\");\r",
+									"    pm.expect(res.pet).to.have.property(\"name\");\r",
+									"    pm.expect(res.pet).to.have.property(\"size\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valida los tipos de datos\", () => {\r",
+									"    pm.expect(res.client).to.be.an(\"object\");\r",
+									"    pm.expect(res.client.fullName).to.be.a(\"string\");\r",
+									"    pm.expect(res.client.phone).to.be.a(\"string\");\r",
+									"\r",
+									"    pm.expect(res.pet).to.be.an(\"object\");\r",
+									"    pm.expect(res.pet.name).to.be.a(\"string\");\r",
+									"    pm.expect(res.pet.size).to.be.a(\"string\");\r",
+									"\r",
+									"    pm.expect(res.services).to.be.an(\"array\");\r",
+									"    pm.expect(res.date).to.be.a(\"string\");\r",
+									"    pm.expect(res.time).to.be.a(\"string\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\" Valida que el turno incluye servicios\", () => {\r",
+									"    pm.expect(res.services.length).to.be.greaterThan(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valida que el ID ingresado sea el mismo que el que se obtuvo en la respuesta\", () => {\r",
+									"    pm.expect(res.id).to.equal(pm.request.url.query.get(\"appointment_id\"));\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{token}}/appointments/{{appointment_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{token}}",
+								"appointments",
+								"{{appointment_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "## 🧠 Lógica del negocio asumida\n\nEsta API es simulada, por lo tanto no tiene un backend real que valide datos. Por eso, aplicamos reglas desde el lado del testing para simular cómo debería comportarse un sistema real. Las validaciones se hacen en el pre-request script.\n\nLas reglas son:\n\n- **Campos obligatorios**: todos los campos deben estar completos.\n    \n- **Tipos esperados**:\n    \n    - `client.phone`: string numérico de 10 a 12 dígitos.\n        \n    - `pet.size`: string → debe ser uno de: `chico`, `mediano`, `grande`.\n        \n    - `services`: array de strings → puede incluir hasta 3 servicios válidos.\n        \n- **Servicios válidos**:\n    \n    - `baño`\n        \n    - `corte de pelo`\n        \n    - `corte de uñas`\n        \n- **Horario permitido para los turnos**:\n    \n    - Solo se aceptan horas **enteras** entre `09:00` y `17:00`.\n        \n- **Formato de fecha**: `YYYY-MM-DD`"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "appointment_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

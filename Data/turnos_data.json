@@ -1,0 +1,66 @@
+[
+    {
+        "client": {
+            "fullName": "Martín Gómez",
+            "phone": "1144556677"
+        },
+        "date": "2025-04-24",
+        "pet": {
+            "name": "Luna",
+            "size": "chico"
+        },
+        "services": [
+            "baño",
+            "corte de pelo",
+            "corte de uñas"
+        ],
+        "time": "15:00"
+    },
+    {
+        "client": {
+            "fullName": "Claudia Fernández",
+            "phone": "1212121212"
+        },
+        "date": "2025-04-28",
+        "pet": {
+            "name": "Arcanine",
+            "size": "grande"
+        },
+        "services": [
+            "baño",
+            "corte de uñas"
+        ],
+        "time": "09:00"
+    },
+    {
+        "client": {
+            "fullName": "Marcela Francia",
+            "phone": "1524282228"
+        },
+        "date": "2025-04-28",
+        "pet": {
+            "name": "Thommy",
+            "size": "mediano"
+        },
+        "services": [
+            "baño"
+        ],
+        "time": "12:00"
+    },
+    {
+        "client": {
+            "fullName": "Lucas Lobo",
+            "phone": "1489663232"
+        },
+        "date": "2025-04-22",
+        "pet": {
+            "name": "Trueno",
+            "size": "mediano"
+        },
+        "services": [
+            "baño",
+            "corte de uñas"
+        ],
+        "time": "09:00"
+    }
+]

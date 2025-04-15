@@ -1,0 +1,5 @@
+newman run "Collection/turnos.postman_collection.json" \
+  -e "Environment/turnos.postman_environment.json" \
+  -d "Data/turnos_data.json" \
+  --reporters cli
+
